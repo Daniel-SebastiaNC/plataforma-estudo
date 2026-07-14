@@ -265,13 +265,64 @@
     color: var(--azul-700);
     margin-bottom: 18px;
   }
-  mark.marca {
+  .marca {
     background: #fff2a8;
     padding: 1px 2px;
     border-radius: 3px;
     cursor: pointer;
   }
-  mark.marca:hover { background: #ffe770; }
+  .marca:hover { background: #ffe770; }
+
+  /* trecho com observação: sublinhado + tooltip */
+  .obs-mark {
+    border-bottom: 2px solid var(--azul-300);
+    cursor: help;
+    position: relative;
+  }
+  .obs-mark::after {
+    content: attr(data-obs);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--azul-900);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: left;
+    white-space: normal;
+    width: max-content;
+    max-width: 240px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 150;
+    pointer-events: none;
+  }
+  .obs-mark::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 6px solid transparent;
+    border-top-color: var(--azul-900);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 150;
+    pointer-events: none;
+  }
+  .obs-mark:hover::after,
+  .obs-mark:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
 
   /* popover de marcação */
   .mark-popover {

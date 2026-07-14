@@ -75,6 +75,7 @@
   /* ---------- Caderno (estado em memória) ---------- */
   const notes = []; // {tipo, quote, texto}
   let currentSelection = "";
+  let currentRange = null;
 
   function renderNotebook() {
     const nb = document.getElementById('notebook');
@@ -93,15 +94,29 @@
         <button class="note-del" onclick="delNote(${i})">Remover</button>
       </div>`).join('');
   }
-  function delNote(i){ notes.splice(i,1); renderNotebook(); updateCadernoBadge(); }
+  function delNote(i){
+    const note = notes[i];
+    if (note && note.el) unwrap(note.el);
+    notes.splice(i,1);
+    renderNotebook();
+    updateCadernoBadge();
+  }
+  function unwrap(el) {
+    const parent = el.parentNode;
+    if (!parent) return;
+    while (el.firstChild) parent.insertBefore(el.firstChild, el);
+    parent.removeChild(el);
+    parent.normalize();
+  }
 
   /* ---------- Seleção de texto ---------- */
   const popover = document.getElementById('popover');
-  document.getElementById('contentBody').addEventListener('mouseup', e => {
+  function handleSelection() {
     const sel = window.getSelection();
     const txt = sel.toString().trim();
     if (txt.length > 3) {
       currentSelection = txt;
+      currentRange = sel.getRangeAt(0).cloneRange();
       const r = sel.getRangeAt(0).getBoundingClientRect();
       popover.style.display = 'flex';
       popover.style.left = (r.left + r.width/2 - 70) + 'px';
@@ -109,27 +124,29 @@
     } else {
       popover.style.display = 'none';
     }
-  });
+  }
+  document.getElementById('contentBody').addEventListener('mouseup', handleSelection);
+  document.getElementById('transcriptBody').addEventListener('mouseup', handleSelection);
   document.addEventListener('mousedown', e => {
     if (!popover.contains(e.target)) popover.style.display = 'none';
   });
 
   function marcarTrecho() {
-    notes.push({ tipo:'marca', quote: currentSelection, texto:'' });
-    highlightSelection();
+    const el = wrapRange(currentRange, 'marca');
+    notes.push({ tipo:'marca', quote: currentSelection, texto:'', el });
     popover.style.display = 'none';
     window.getSelection().removeAllRanges();
     flashCaderno();
   }
-  function highlightSelection() {
-    const sel = window.getSelection();
-    if (!sel.rangeCount) return;
+  function wrapRange(range, className, obsText) {
+    if (!range) return null;
     try {
-      const range = sel.getRangeAt(0);
-      const mark = document.createElement('mark');
-      mark.className = 'marca';
-      range.surroundContents(mark);
-    } catch(e){ /* seleção cruzando elementos */ }
+      const el = document.createElement('span');
+      el.className = className;
+      if (obsText) el.setAttribute('data-obs', obsText); // atributo, não innerHTML — seguro contra aspas/HTML
+      range.surroundContents(el);
+      return el;
+    } catch(e){ return null; /* seleção cruzando elementos */ }
   }
 
   /* ---------- Modal observação ---------- */
@@ -144,7 +161,8 @@
   function salvarObs() {
     const texto = document.getElementById('obsText').value.trim();
     if (!texto) { document.getElementById('obsText').focus(); return; }
-    notes.push({ tipo:'obs', quote: currentSelection, texto });
+    const el = wrapRange(currentRange, 'obs-mark', texto);
+    notes.push({ tipo:'obs', quote: currentSelection, texto, el });
     fecharObs();
     flashCaderno();
     window.getSelection().removeAllRanges();
