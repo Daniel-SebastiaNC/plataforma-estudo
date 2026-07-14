@@ -28,12 +28,32 @@
 
     <!-- ============ CENTRO: vídeo + tabs ============ -->
     <main class="main">
+      <!-- marca-página: retomar de onde parou -->
+      <div class="resume-banner" id="resumeBanner" style="display:none;">
+        <span class="resume-icon">🔖</span>
+        <div class="resume-body">
+          <div class="resume-title">Continue de onde parou</div>
+          <div class="resume-text" id="resumeText"></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="retomar()">Retomar</button>
+        <button class="resume-close" aria-label="Dispensar" onclick="dismissResume()">✕</button>
+      </div>
+
       <div class="video-wrap">
         <button class="play-btn" aria-label="Reproduzir aula"></button>
         <div class="video-label">
           <small>Aula 03</small>
           <div id="videoTitle">Estrutura semântica com HTML5</div>
         </div>
+      </div>
+
+      <!-- barra do player (mockado) -->
+      <div class="player-bar">
+        <button class="player-btn" id="playerToggle" aria-label="Reproduzir/pausar">▶</button>
+        <span class="player-time" id="playerTime">00:00 / 08:00</span>
+        <div class="player-track" id="playerTrack"><div class="player-fill" id="playerFill"></div></div>
+        <button class="btn btn-ghost btn-sm" onclick="anotarAgora()">⏱ Anotar neste minuto</button>
+        <button class="btn btn-ghost btn-sm" onclick="marcarPagina()">🔖 Marcar página</button>
       </div>
 
       <div class="lesson-header">
@@ -166,6 +186,19 @@
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="fecharObs()">Cancelar</button>
         <button class="btn btn-primary" onclick="salvarObs()">Salvar no caderno</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal nota por minutagem -->
+  <div class="modal-bg" id="modalTempo">
+    <div class="modal">
+      <h3>Anotar no vídeo</h3>
+      <div class="quoted" id="tempoLabel"></div>
+      <textarea id="tempoText" placeholder="O que você quer lembrar deste momento do vídeo?"></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="fecharNotaTempo()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarNotaTempo()">Salvar no caderno</button>
       </div>
     </div>
   </div>

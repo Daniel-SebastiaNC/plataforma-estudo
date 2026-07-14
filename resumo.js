@@ -40,6 +40,7 @@ if (!data || !data.notes || !data.notes.length) {
 function renderResumo(data) {
   const marcas = data.notes.filter(n => n.tipo === 'marca');
   const obs    = data.notes.filter(n => n.tipo === 'obs');
+  const tempos = data.notes.filter(n => n.tipo === 'tempo');
   const tema   = data.aula || 'este conteúdo';
 
   let html = `<div class="ai-badge">🤖 Mesclado por IA</div>`;
@@ -64,6 +65,14 @@ function renderResumo(data) {
         <div class="obs-nota"><b>Sua nota:</b> ${esc(o.texto)}</div>
         <div class="ia-coment">💡 <span><b>Comentário da IA:</b> ${esc(comentarioIA(o, i))}</span></div>
       </div>`).join('');
+  }
+
+  // 3b) anotações no vídeo (por minutagem)
+  if (tempos.length) {
+    html += `<h2 class="sec-title">■ Anotações no vídeo</h2>`;
+    html += `<ul class="trecho-list">` +
+      tempos.map(t => `<li><b>⏱ ${esc(t.tempo)}</b> — ${esc(t.texto)}</li>`).join('') +
+      `</ul>`;
   }
 
   // 4) para revisar

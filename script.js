@@ -21,6 +21,13 @@
     ["06:30", "Na próxima aula, começamos a estilizar essa estrutura com CSS. Até lá, pratique reescrevendo uma página só com divs."],
   ];
 
+  /* ---------- Player (mockado) ---------- */
+  const DUR = 8 * 60; // 480s ("8 min")
+  const player = { cur: 0, playing: false, timer: null };
+  const toSec = s => { const [m, ss] = s.split(':').map(Number); return m * 60 + ss; };
+  const fmt = t => { t = Math.max(0, Math.floor(t)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+  function curLineIdx(sec = player.cur) { let idx = 0; transcript.forEach((t, i) => { if (toSec(t[0]) <= sec) idx = i; }); return idx; }
+
   /* ---------- Render aulas ---------- */
   const lessonList = document.getElementById('lessonList');
   lessons.forEach((l, i) => {
@@ -44,10 +51,13 @@
 
   /* ---------- Render transcrição ---------- */
   const tb = document.getElementById('transcriptBody');
-  transcript.forEach(([ts, txt]) => {
+  transcript.forEach(([ts, txt], i) => {
     const l = document.createElement('div');
     l.className = 'transcript-line';
-    l.innerHTML = `<span class="ts">${ts}</span><span>${txt}</span>`;
+    l.dataset.idx = i;
+    l.innerHTML = `<span class="ts">${ts}</span><span class="tl-text">${txt}</span>` +
+      `<button class="tl-annot" title="Anotar nesta minutagem" onclick="event.stopPropagation();abrirNotaTempo(${toSec(ts)})">⏱</button>`;
+    l.onclick = () => seek(toSec(ts));
     tb.appendChild(l);
   });
 
@@ -72,6 +82,108 @@
     };
   });
 
+  /* ---------- Controles do player ---------- */
+  function togglePlay() { player.playing ? pause() : play(); }
+  function play() {
+    if (player.cur >= DUR) player.cur = 0;
+    player.playing = true;
+    document.querySelector('.play-btn').classList.add('playing');
+    document.getElementById('playerToggle').textContent = '❚❚';
+    player.timer = setInterval(tick, 1000);
+    syncPlayer();
+  }
+  function pause() {
+    player.playing = false;
+    clearInterval(player.timer);
+    document.querySelector('.play-btn').classList.remove('playing');
+    document.getElementById('playerToggle').textContent = '▶';
+    syncPlayer();
+    salvarBookmark();
+  }
+  function tick() {
+    player.cur++;
+    if (player.cur >= DUR) { player.cur = DUR; pause(); return; }
+    syncPlayer();
+    if (player.cur % 5 === 0) salvarBookmark();
+  }
+  function seek(sec) {
+    player.cur = Math.max(0, Math.min(DUR, sec));
+    syncPlayer(true);
+  }
+  function syncPlayer(scroll) {
+    document.getElementById('playerTime').textContent = fmt(player.cur) + ' / ' + fmt(DUR);
+    document.getElementById('playerFill').style.width = (player.cur / DUR * 100) + '%';
+    const idx = curLineIdx();
+    document.querySelectorAll('.transcript-line').forEach(l => l.classList.toggle('current', +l.dataset.idx === idx));
+    if (scroll) {
+      const el = document.querySelector('.transcript-line[data-idx="' + idx + '"]');
+      if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }
+  document.querySelector('.play-btn').onclick = togglePlay;
+  document.getElementById('playerToggle').onclick = togglePlay;
+  document.getElementById('playerTrack').onclick = e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    seek((e.clientX - r.left) / r.width * DUR);
+  };
+
+  /* ---------- Nota por minutagem ---------- */
+  let tempoSec = 0;
+  function anotarAgora() { abrirNotaTempo(player.cur); }
+  function abrirNotaTempo(sec) {
+    tempoSec = sec;
+    if (player.playing) pause();
+    document.getElementById('tempoLabel').textContent = '⏱ Minuto ' + fmt(sec);
+    document.getElementById('tempoText').value = '';
+    document.getElementById('modalTempo').classList.add('open');
+    setTimeout(() => document.getElementById('tempoText').focus(), 50);
+  }
+  function fecharNotaTempo() { document.getElementById('modalTempo').classList.remove('open'); }
+  function salvarNotaTempo() {
+    const texto = document.getElementById('tempoText').value.trim();
+    if (!texto) { document.getElementById('tempoText').focus(); return; }
+    notes.push({ tipo: 'tempo', tempo: fmt(tempoSec), sec: tempoSec, texto, linha: transcript[curLineIdx(tempoSec)][1] });
+    fecharNotaTempo();
+    flashCaderno();
+    if (document.getElementById('panel-caderno').classList.contains('active')) renderNotebook();
+  }
+  function seekDeNota(sec) {
+    const tabTr = document.querySelector('.tab[data-tab="transcricao"]');
+    if (tabTr) tabTr.click();
+    seek(sec);
+  }
+
+  /* ---------- Marca-página (retomar de onde parou) ---------- */
+  const BK = 'aprendeBookmark';
+  function salvarBookmark() {
+    const i = curLineIdx();
+    localStorage.setItem(BK, JSON.stringify({
+      sec: player.cur, tempo: fmt(player.cur), linhaIdx: i, linhaTexto: transcript[i][1]
+    }));
+  }
+  function marcarPagina() {
+    salvarBookmark();
+    const btn = [...document.querySelectorAll('.player-bar .btn')].find(b => b.textContent.includes('Marcar'));
+    if (btn) { const orig = btn.textContent; btn.textContent = '✓ Página marcada em ' + fmt(player.cur); setTimeout(() => btn.textContent = orig, 1400); }
+  }
+  function carregarBookmark() {
+    let b = null;
+    try { b = JSON.parse(localStorage.getItem(BK)); } catch (e) { b = null; }
+    if (!b) b = { sec: 195, tempo: '03:15', linhaIdx: 5, linhaTexto: transcript[5][1] }; // seed mockado
+    document.getElementById('resumeText').innerHTML = '<strong>' + b.tempo + '</strong> — "' + b.linhaTexto + '"';
+    document.getElementById('resumeBanner').dataset.sec = b.sec;
+    document.getElementById('resumeBanner').style.display = 'flex';
+  }
+  function retomar() {
+    const sec = +document.getElementById('resumeBanner').dataset.sec;
+    const tabTr = document.querySelector('.tab[data-tab="transcricao"]');
+    if (tabTr) tabTr.click();
+    seek(sec);
+    dismissResume();
+  }
+  function dismissResume() { document.getElementById('resumeBanner').style.display = 'none'; }
+  window.addEventListener('beforeunload', salvarBookmark);
+
   /* ---------- Caderno (estado em memória) ---------- */
   const notes = []; // {tipo, quote, texto}
   let currentSelection = "";
@@ -88,13 +200,24 @@
       </div>`;
       return;
     }
-    nb.innerHTML = notes.map((n, i) => `
+    nb.innerHTML = notes.map((n, i) => {
+      if (n.tipo === 'tempo') {
+        return `
+      <div class="note-card">
+        <div class="note-src">⏱ Anotação no vídeo · Aula 03</div>
+        <button class="note-time" onclick="seekDeNota(${n.sec})">▶ ${n.tempo}</button>
+        <div class="note-text">${n.texto}</div>
+        <button class="note-del" onclick="delNote(${i})">Remover</button>
+      </div>`;
+      }
+      return `
       <div class="note-card">
         <div class="note-src">${n.tipo === 'marca' ? '✏️ Trecho marcado' : '💬 Observação'} · Aula 03</div>
         <div class="note-quote">"${n.quote}"</div>
         ${n.texto ? `<div class="note-text">${n.texto}</div>` : ''}
         <button class="note-del" onclick="delNote(${i})">Remover</button>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
   function delNote(i){
     const note = notes[i];
@@ -118,7 +241,7 @@
       aula: document.getElementById('mainTitle').textContent,
       curso: document.querySelector('.course-name') ? document.querySelector('.course-name').textContent : '',
       geradoEm: new Date().toISOString(),
-      notes: notes.map(n => ({ tipo: n.tipo, quote: n.quote, texto: n.texto })),
+      notes: notes.map(n => ({ tipo: n.tipo, quote: n.quote, texto: n.texto, tempo: n.tempo })),
     };
     sessionStorage.setItem('resumoIA', JSON.stringify(payload));
     window.open('resumo.html', '_blank');
@@ -233,3 +356,5 @@
   }
 
   renderNotebook();
+  carregarBookmark();
+  syncPlayer();

@@ -195,6 +195,100 @@
   .video-label small { opacity: .7; font-size: 12px; }
   .video-label div { font-weight: 600; font-size: 15px; margin-top: 2px; }
 
+  .play-btn.playing::after {
+    content: "";
+    width: 20px; height: 24px;
+    border: none;
+    margin-left: 0;
+    background:
+      linear-gradient(var(--azul-700), var(--azul-700)) left/7px 100% no-repeat,
+      linear-gradient(var(--azul-700), var(--azul-700)) right/7px 100% no-repeat;
+  }
+
+  /* ---------- Barra do player (mockado) ---------- */
+  .player-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .player-btn {
+    width: 38px; height: 38px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--azul-500);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .15s;
+  }
+  .player-btn:hover { background: var(--azul-700); }
+  .player-time {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cinza-700);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .player-track {
+    flex: 1;
+    min-width: 120px;
+    height: 7px;
+    background: var(--azul-100);
+    border-radius: 99px;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .player-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--azul-500), var(--azul-300));
+    border-radius: 99px;
+    transition: width .15s linear;
+  }
+
+  /* ---------- Marca-página (retomar) ---------- */
+  .resume-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--azul-50);
+    border: 1px solid var(--azul-100);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .resume-icon { font-size: 22px; flex-shrink: 0; }
+  .resume-body { flex: 1; min-width: 0; }
+  .resume-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--azul-700);
+  }
+  .resume-text {
+    font-size: 13px;
+    color: var(--cinza-700);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .resume-text strong { color: var(--azul-900); }
+  .resume-close {
+    background: none;
+    border: none;
+    color: var(--cinza-500);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 4px 6px;
+    flex-shrink: 0;
+  }
+  .resume-close:hover { color: var(--azul-900); }
+
   .lesson-header {
     margin: 20px 2px 16px;
   }
@@ -405,12 +499,34 @@
   .transcript-line {
     display: flex;
     gap: 14px;
+    align-items: flex-start;
     padding: 9px 10px;
     border-radius: 8px;
     font-size: 15px;
     line-height: 1.6;
+    cursor: pointer;
+    position: relative;
   }
   .transcript-line:hover { background: var(--azul-50); }
+  .transcript-line.current {
+    background: var(--azul-50);
+    box-shadow: inset 3px 0 0 var(--azul-500);
+  }
+  .transcript-line.current .ts { color: var(--azul-700); }
+  .tl-text { flex: 1; }
+  .tl-annot {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0;
+    padding: 0 4px;
+    border-radius: 6px;
+    transition: opacity .15s, background .15s;
+  }
+  .transcript-line:hover .tl-annot { opacity: .6; }
+  .tl-annot:hover { opacity: 1 !important; background: var(--azul-100); }
   .ts {
     color: var(--azul-500);
     font-variant-numeric: tabular-nums;
@@ -604,6 +720,24 @@
     font-weight: 600;
     margin-bottom: 8px;
   }
+  .note-card .note-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--azul-100);
+    color: var(--azul-700);
+    border: none;
+    border-radius: 99px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    margin-bottom: 8px;
+    font-family: inherit;
+    transition: background .15s;
+  }
+  .note-card .note-time:hover { background: var(--azul-300); color: #fff; }
   .note-card .note-quote {
     font-size: 13px;
     color: var(--cinza-700);
