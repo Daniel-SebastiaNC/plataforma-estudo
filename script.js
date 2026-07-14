@@ -178,7 +178,6 @@
 
   /* ---------- Chats ---------- */
   function enviarDuvida(){ pushMsg('chatDuvidas','inputDuvida','Monitor','Boa pergunta! Vou detalhar isso pra você já já.'); }
-  function enviarProf(){ pushMsg('chatProf','inputProf','Prof. Marina','Ótimo ponto. Deixa eu explicar com um exemplo prático.'); }
   function pushMsg(chatId, inputId, who, reply) {
     const inp = document.getElementById(inputId);
     const txt = inp.value.trim();
@@ -193,7 +192,6 @@
     }, 700);
   }
   document.getElementById('inputDuvida').addEventListener('keydown',e=>{if(e.key==='Enter')enviarDuvida();});
-  document.getElementById('inputProf').addEventListener('keydown',e=>{if(e.key==='Enter')enviarProf();});
 
   /* ---------- Simulado ---------- */
   let quizSel = null, quizCorreta = false;
