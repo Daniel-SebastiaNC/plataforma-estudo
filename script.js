@@ -79,6 +79,8 @@
 
   function renderNotebook() {
     const nb = document.getElementById('notebook');
+    const btn = document.getElementById('btnMesclar');
+    if (btn) btn.style.display = notes.length ? 'inline-flex' : 'none';
     if (notes.length === 0) {
       nb.innerHTML = `<div class="empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
@@ -107,6 +109,19 @@
     while (el.firstChild) parent.insertBefore(el.firstChild, el);
     parent.removeChild(el);
     parent.normalize();
+  }
+
+  /* ---------- Mesclar com IA (mockado) ---------- */
+  function gerarResumo() {
+    if (!notes.length) return;
+    const payload = {
+      aula: document.getElementById('mainTitle').textContent,
+      curso: document.querySelector('.course-name') ? document.querySelector('.course-name').textContent : '',
+      geradoEm: new Date().toISOString(),
+      notes: notes.map(n => ({ tipo: n.tipo, quote: n.quote, texto: n.texto })),
+    };
+    sessionStorage.setItem('resumoIA', JSON.stringify(payload));
+    window.open('resumo.html', '_blank');
   }
 
   /* ---------- Seleção de texto ---------- */

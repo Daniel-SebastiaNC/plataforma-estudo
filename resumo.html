@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo inteligente — Aprende</title>
+<link rel="stylesheet" href="resumo.css">
+</head>
+<body>
+
+  <!-- Barra de ações (não vai para o PDF) -->
+  <div class="toolbar no-print">
+    <a class="tb-link" href="index.html">← Voltar ao curso</a>
+    <button class="tb-btn" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+      Baixar PDF
+    </button>
+  </div>
+
+  <!-- Folha do documento -->
+  <div class="sheet" id="sheet">
+    <header class="doc-head">
+      <div class="logo"><span class="dot"></span>Aprende</div>
+      <div class="doc-meta" id="docMeta"></div>
+    </header>
+    <h1 class="doc-title">Resumo inteligente</h1>
+    <div class="doc-sub" id="docSub"></div>
+
+    <div id="docBody"></div>
+  </div>
+
+<script src="resumo.js"></script>
+</body>
+</html>
