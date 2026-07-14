@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado detalhado — Aprende</title>
+<link rel="stylesheet" href="simulado.css?v=1">
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="tb-link" href="index.html">← Voltar ao curso</a>
+    <div class="logo"><span class="dot"></span>Aprende</div>
+  </div>
+
+  <div class="sheet">
+    <header class="doc-head">
+      <div>
+        <h1 class="doc-title">Simulado detalhado</h1>
+        <div class="doc-sub">Aula 03 · Estrutura semântica com HTML5</div>
+      </div>
+      <span class="doc-badge">📝 8 questões</span>
+    </header>
+
+    <!-- Área da questão -->
+    <div id="quizArea">
+      <div class="prog-row">
+        <span id="progLabel">Questão 1 de 8</span>
+        <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+      </div>
+
+      <div class="quiz-q" id="enunciado"></div>
+      <div id="opcoes"></div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnAnt" onclick="ant()">← Anterior</button>
+        <button class="btn btn-primary" id="btnProx" onclick="prox()">Próxima →</button>
+      </div>
+    </div>
+
+    <!-- Área de resultado -->
+    <div id="resultArea" style="display:none;"></div>
+  </div>
+
+<script src="simulado.js?v=1"></script>
+</body>
+</html>
