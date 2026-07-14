@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprende — Plataforma de Estudos</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo"><span class="dot"></span>Aprende</div>
+    <span class="course-name">Introdução ao Desenvolvimento Web</span>
+    <div class="progress-mini">
+      <span id="progressLabel">2 de 6 aulas</span>
+      <div class="track"><div class="fill" id="progressFill" style="width:33%"></div></div>
+    </div>
+  </div>
+
+  <div class="app">
+
+    <!-- ============ ESQUERDA: aulas ============ -->
+    <aside class="aside-left">
+      <div class="aside-title">Conteúdo do curso</div>
+      <div id="lessonList"></div>
+    </aside>
+
+    <!-- ============ CENTRO: vídeo + tabs ============ -->
+    <main class="main">
+      <div class="video-wrap">
+        <button class="play-btn" aria-label="Reproduzir aula"></button>
+        <div class="video-label">
+          <small>Aula 03</small>
+          <div id="videoTitle">Estrutura semântica com HTML5</div>
+        </div>
+      </div>
+
+      <div class="lesson-header">
+        <h1 id="mainTitle">Estrutura semântica com HTML5</h1>
+        <p>Aprenda a usar as tags certas para dar significado ao seu conteúdo e melhorar acessibilidade e SEO.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="conteudo">Conteúdo da aula</button>
+        <button class="tab" data-tab="transcricao">Transcrição da aula</button>
+      </div>
+
+      <!-- Conteúdo -->
+      <section class="tab-panel active" id="tab-conteudo">
+        <div class="toolbar-hint">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+          Selecione qualquer trecho para marcar ou adicionar uma observação — tudo fica salvo no Caderno do aluno.
+        </div>
+        <div class="content-body" id="contentBody">
+          <h2>O que é HTML semântico?</h2>
+          <p class="selectable">HTML semântico significa usar cada elemento pelo seu significado, e não apenas pela aparência. Em vez de encher a página de divs genéricas, você escolhe tags que descrevem o papel do conteúdo: um cabeçalho é um header, a navegação principal é uma nav, e o conteúdo central da página é um main.</p>
+          <p class="selectable">Essa escolha tem impacto direto na acessibilidade. Leitores de tela usam essas marcações para permitir que a pessoa navegue direto para o conteúdo principal ou pule entre seções, sem precisar ouvir a página inteira do começo.</p>
+          <h2>Principais elementos</h2>
+          <p class="selectable">O elemento article representa um bloco de conteúdo independente, que faria sentido sozinho, como um post ou uma notícia. Já o section agrupa conteúdo relacionado dentro de um tema, geralmente com seu próprio título. O aside guarda conteúdo secundário, como uma barra lateral ou uma nota complementar.</p>
+          <p class="selectable">Por fim, o footer fecha a página ou uma seção com informações de rodapé, como créditos, contato e links legais. Usar essas tags corretamente deixa o código mais legível e mais fácil de manter por qualquer pessoa da equipe.</p>
+        </div>
+      </section>
+
+      <!-- Transcrição -->
+      <section class="tab-panel" id="tab-transcricao">
+        <div class="transcript-head">
+          <div>
+            <h2 style="font-size:16px;">Transcrição completa</h2>
+            <p style="font-size:13px;color:var(--cinza-500);margin-top:3px;">Gerada automaticamente · 8 min de áudio</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="baixarAudio()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Baixar áudio
+          </button>
+        </div>
+        <div id="transcriptBody"></div>
+      </section>
+    </main>
+
+    <!-- ============ DIREITA: navegação de telas ============ -->
+    <aside class="aside-right">
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-panel="duvidas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Dúvidas
+        </button>
+        <button class="nav-tab" data-panel="revisao">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M18.7 8l-5.2 5.2-2.8-2.8L7 14"/></svg>
+          Revisão
+        </button>
+        <button class="nav-tab" data-panel="simulado">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Simulado
+        </button>
+        <button class="nav-tab" data-panel="caderno">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          Caderno
+        </button>
+        <button class="nav-tab" data-panel="professor">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+          Professor
+        </button>
+      </nav>
+
+      <!-- Dúvidas -->
+      <div class="panel active" id="panel-duvidas">
+        <h2>Tirar dúvidas</h2>
+        <p class="sub">Pergunte sobre esta aula. As respostas ficam registradas aqui.</p>
+        <div class="chat" id="chatDuvidas">
+          <div class="msg prof"><div class="who">Monitor</div>Oi! Ficou alguma dúvida sobre HTML semântico? É só perguntar.</div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="inputDuvida" placeholder="Digite sua dúvida...">
+          <button class="btn btn-primary btn-sm" onclick="enviarDuvida()">Enviar</button>
+        </div>
+      </div>
+
+      <!-- Revisão -->
+      <div class="panel" id="panel-revisao">
+        <h2>Revisão</h2>
+        <p class="sub">Os pontos-chave para você fixar antes de avançar.</p>
+        <div class="card"><span class="tag">Conceito</span><h4>Significado antes da aparência</h4><p>Escolha a tag pelo papel do conteúdo, não pelo visual. O CSS cuida da aparência.</p></div>
+        <div class="card"><span class="tag">Estrutura</span><h4>header · nav · main · footer</h4><p>Formam o esqueleto de quase toda página. main aparece só uma vez por documento.</p></div>
+        <div class="card"><span class="tag">Blocos</span><h4>article vs section</h4><p>article é independente e reutilizável; section agrupa conteúdo de um mesmo tema.</p></div>
+        <div class="card"><span class="tag">Acessibilidade</span><h4>Leitores de tela agradecem</h4><p>Tags semânticas permitem pular direto para o conteúdo principal e navegar por seções.</p></div>
+      </div>
+
+      <!-- Simulado -->
+      <div class="panel" id="panel-simulado">
+        <h2>Simulado</h2>
+        <p class="sub">Teste rápido sobre a aula.</p>
+        <div class="card" style="background:#fff;">
+          <div class="quiz-q">Qual elemento representa um conteúdo independente, que faz sentido sozinho?</div>
+          <div class="quiz-opt" onclick="selOpt(this,false)"><span class="letter">A</span> section</div>
+          <div class="quiz-opt" onclick="selOpt(this,true)"><span class="letter">B</span> article</div>
+          <div class="quiz-opt" onclick="selOpt(this,false)"><span class="letter">C</span> aside</div>
+          <div class="quiz-opt" onclick="selOpt(this,false)"><span class="letter">D</span> div</div>
+          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:6px;justify-content:center;" onclick="conferir()">Conferir resposta</button>
+          <p id="quizFeedback" style="font-size:13px;margin-top:11px;text-align:center;font-weight:600;"></p>
+        </div>
+      </div>
+
+      <!-- Caderno -->
+      <div class="panel" id="panel-caderno">
+        <h2>Caderno do aluno</h2>
+        <p class="sub">Suas marcações e observações reunidas.</p>
+        <div id="notebook"></div>
+      </div>
+
+      <!-- Professor -->
+      <div class="panel" id="panel-professor">
+        <h2>Aula com professor</h2>
+        <p class="sub">Fale direto com o professor da disciplina.</p>
+        <div class="chat" id="chatProf">
+          <div class="msg prof"><div class="who">Prof. Marina</div>Olá! Estou disponível para dúvidas mais aprofundadas sobre a matéria. Como posso ajudar?</div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="inputProf" placeholder="Escreva ao professor...">
+          <button class="btn btn-primary btn-sm" onclick="enviarProf()">Enviar</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- popover -->
+  <div class="mark-popover" id="popover">
+    <button onclick="marcarTrecho()">✏️ Marcar</button>
+    <button onclick="abrirObs()">💬 Observação</button>
+  </div>
+
+  <!-- modal -->
+  <div class="modal-bg" id="modalObs">
+    <div class="modal">
+      <h3>Adicionar observação</h3>
+      <div class="quoted" id="modalQuote"></div>
+      <textarea id="obsText" placeholder="Escreva sua anotação sobre este trecho..."></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="fecharObs()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarObs()">Salvar no caderno</button>
+      </div>
+    </div>
+  </div>
+
+<script src="script.js">
+  
+</script>
+</body>
+</html>
