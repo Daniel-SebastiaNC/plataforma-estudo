@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aprende — Plataforma de Estudos</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 
 </head>
 <body>
@@ -79,6 +79,36 @@
           <h2>Principais elementos</h2>
           <p class="selectable">O elemento article representa um bloco de conteúdo independente, que faria sentido sozinho, como um post ou uma notícia. Já o section agrupa conteúdo relacionado dentro de um tema, geralmente com seu próprio título. O aside guarda conteúdo secundário, como uma barra lateral ou uma nota complementar.</p>
           <p class="selectable">Por fim, o footer fecha a página ou uma seção com informações de rodapé, como créditos, contato e links legais. Usar essas tags corretamente deixa o código mais legível e mais fácil de manter por qualquer pessoa da equipe.</p>
+
+          <h2>Estrutura típica de uma página</h2>
+          <p class="selectable">Numa página real, esses elementos se combinam formando um esqueleto previsível. No topo fica o header, geralmente com o logotipo e a nav de navegação principal. O miolo da página vive dentro de um único main, que concentra o conteúdo mais importante — aquilo que a pessoa realmente veio consumir.</p>
+          <p class="selectable">Dentro do main, você organiza o conteúdo em blocos: um article para cada unidade independente e sections para agrupar temas relacionados. À margem, o aside carrega o que é complementar, como links relacionados ou um resumo. Lá embaixo, o footer encerra a página com as informações de rodapé.</p>
+
+          <h2>Um exemplo na prática</h2>
+          <p class="selectable">Repare como a marcação abaixo já comunica a função de cada parte antes mesmo de olhar o CSS. Qualquer pessoa — ou leitor de tela — entende a hierarquia só pela escolha das tags.</p>
+          <pre class="code-sample">&lt;body&gt;
+  &lt;header&gt;
+    &lt;nav&gt;...&lt;/nav&gt;
+  &lt;/header&gt;
+
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;h1&gt;Título do conteúdo&lt;/h1&gt;
+      &lt;section&gt;...&lt;/section&gt;
+    &lt;/article&gt;
+    &lt;aside&gt;...&lt;/aside&gt;
+  &lt;/main&gt;
+
+  &lt;footer&gt;...&lt;/footer&gt;
+&lt;/body&gt;</pre>
+
+          <h2>Erros comuns</h2>
+          <p class="selectable">O erro mais frequente é a chamada "div-soup": resolver toda a estrutura com divs aninhadas, sem nenhuma tag semântica. O resultado até funciona visualmente, mas o código perde significado e a acessibilidade despenca.</p>
+          <p class="selectable">Outro deslize é usar section apenas para criar um espaçamento, sem que aquele bloco tenha de fato um título e um tema próprio — nesses casos, uma div genérica seria mais honesta. Também é comum abusar de header e footer em todo lugar: eles fazem sentido para a página e para seções maiores, não para cada pequeno cartão.</p>
+
+          <h2>Boas práticas e acessibilidade</h2>
+          <p class="selectable">Use um único main por documento: ele marca o ponto de partida do conteúdo principal e é justamente para lá que os leitores de tela oferecem um atalho. Mantenha os títulos numa hierarquia coerente, do h1 aos subníveis, sem pular etapas só por causa da aparência.</p>
+          <p class="selectable">Elementos como header, nav, main, aside e footer funcionam como landmarks: pontos de referência que permitem navegar a página por regiões. Quando você respeita esse vocabulário, entrega de graça uma experiência muito melhor para quem depende de tecnologias assistivas — e um código mais fácil de manter para o resto da equipe.</p>
         </div>
       </section>
 
@@ -96,6 +126,10 @@
         </div>
         <div id="transcriptBody"></div>
       </section>
+
+      <div class="lesson-footer">
+        <button class="btn btn-primary" id="btnConcluir" onclick="concluirAula()">✓ Concluir aula</button>
+      </div>
     </main>
 
     <!-- ============ DIREITA: navegação de telas ============ -->
@@ -203,7 +237,7 @@
     </div>
   </div>
 
-<script src="script.js">
+<script src="script.js?v=2">
   
 </script>
 </body>

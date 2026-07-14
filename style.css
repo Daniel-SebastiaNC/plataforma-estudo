@@ -346,6 +346,31 @@
   }
   .content-body p { margin-bottom: 14px; }
   .content-body p.selectable { cursor: text; }
+  .code-sample {
+    background: var(--azul-900);
+    color: #dbe7ff;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 16px 18px;
+    border-radius: 10px;
+    margin: 4px 0 18px;
+    overflow-x: auto;
+    white-space: pre;
+    user-select: text;
+    box-shadow: var(--sombra);
+  }
+
+  /* rodapé da aula: concluir */
+  .lesson-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 22px 0 8px;
+    margin-top: 20px;
+    border-top: 1px solid var(--cinza-300);
+  }
+  #btnConcluir.concluido { background: var(--verde); }
+  #btnConcluir.concluido:hover { background: #188855; }
 
   .toolbar-hint {
     display: flex;

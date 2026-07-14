@@ -30,23 +30,58 @@
 
   /* ---------- Render aulas ---------- */
   const lessonList = document.getElementById('lessonList');
-  lessons.forEach((l, i) => {
-    const el = document.createElement('div');
-    el.className = 'lesson' + (l.done ? ' done' : '') + (l.active ? ' active' : '');
-    el.innerHTML = `
-      <span class="lesson-check">✓</span>
-      <div class="lesson-info">
-        <div class="lesson-title">${l.t}</div>
-        <div class="lesson-meta">${l.done ? 'Concluída' : 'Não vista'} · ${l.meta}</div>
-      </div>`;
-    el.onclick = () => selecionarAula(i);
-    lessonList.appendChild(el);
-  });
+  let activeIdx = lessons.findIndex(l => l.active);
+
+  function renderLessons() {
+    lessonList.innerHTML = '';
+    lessons.forEach((l, i) => {
+      const el = document.createElement('div');
+      el.className = 'lesson' + (l.done ? ' done' : '') + (l.active ? ' active' : '');
+      el.innerHTML = `
+        <span class="lesson-check">✓</span>
+        <div class="lesson-info">
+          <div class="lesson-title">${l.t}</div>
+          <div class="lesson-meta">${l.done ? 'Concluída' : 'Não vista'} · ${l.meta}</div>
+        </div>`;
+      el.onclick = () => selecionarAula(i);
+      lessonList.appendChild(el);
+    });
+  }
+
+  function renderProgress() {
+    const done = lessons.filter(l => l.done).length;
+    document.getElementById('progressLabel').textContent = `${done} de ${lessons.length} aulas`;
+    document.getElementById('progressFill').style.width = (done / lessons.length * 100) + '%';
+  }
+
+  function syncBtnConcluir() {
+    const btn = document.getElementById('btnConcluir');
+    if (!btn) return;
+    if (lessons[activeIdx].done) {
+      btn.textContent = '✓ Aula concluída';
+      btn.title = 'Clique para desmarcar como concluída';
+      btn.classList.add('concluido');
+    } else {
+      btn.textContent = '✓ Concluir aula';
+      btn.title = '';
+      btn.classList.remove('concluido');
+    }
+  }
+
+  function concluirAula() {
+    lessons[activeIdx].done = !lessons[activeIdx].done;
+    renderLessons();
+    renderProgress();
+    syncBtnConcluir();
+  }
 
   function selecionarAula(i) {
-    document.querySelectorAll('.lesson').forEach((e,idx)=>e.classList.toggle('active', idx===i));
+    lessons.forEach((l, idx) => l.active = idx === i);
+    activeIdx = i;
+    renderLessons();
     document.getElementById('videoTitle').textContent = lessons[i].t;
     document.getElementById('mainTitle').textContent = lessons[i].t;
+    syncBtnConcluir();
   }
 
   /* ---------- Render transcrição ---------- */
@@ -144,8 +179,8 @@
     if (!texto) { document.getElementById('tempoText').focus(); return; }
     notes.push({ tipo: 'tempo', tempo: fmt(tempoSec), sec: tempoSec, texto, linha: transcript[curLineIdx(tempoSec)][1] });
     fecharNotaTempo();
+    renderNotebook();
     flashCaderno();
-    if (document.getElementById('panel-caderno').classList.contains('active')) renderNotebook();
   }
   function seekDeNota(sec) {
     const tabTr = document.querySelector('.tab[data-tab="transcricao"]');
@@ -270,21 +305,37 @@
   });
 
   function marcarTrecho() {
-    const el = wrapRange(currentRange, 'marca');
+    const el = wrapRange(getMarkRange(), 'marca');
     notes.push({ tipo:'marca', quote: currentSelection, texto:'', el });
     popover.style.display = 'none';
     window.getSelection().removeAllRanges();
+    renderNotebook();
     flashCaderno();
   }
+  // prefere a seleção viva (ainda presente ao clicar em "Marcar"); usa o clone como reserva
+  function getMarkRange() {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount) {
+      const r = sel.getRangeAt(0);
+      if (!r.collapsed && r.toString().trim().length) return r;
+    }
+    return currentRange;
+  }
   function wrapRange(range, className, obsText) {
-    if (!range) return null;
+    if (!range || range.collapsed) return null;
+    const el = document.createElement('span');
+    el.className = className;
+    if (obsText) el.setAttribute('data-obs', obsText); // atributo, não innerHTML — seguro contra aspas/HTML
     try {
-      const el = document.createElement('span');
-      el.className = className;
-      if (obsText) el.setAttribute('data-obs', obsText); // atributo, não innerHTML — seguro contra aspas/HTML
       range.surroundContents(el);
-      return el;
-    } catch(e){ return null; /* seleção cruzando elementos */ }
+    } catch (e) {
+      // seleção cruzando fronteiras de elementos: extrai o conteúdo e envolve
+      try {
+        el.appendChild(range.extractContents());
+        range.insertNode(el);
+      } catch (e2) { return null; }
+    }
+    return el;
   }
 
   /* ---------- Modal observação ---------- */
@@ -302,6 +353,7 @@
     const el = wrapRange(currentRange, 'obs-mark', texto);
     notes.push({ tipo:'obs', quote: currentSelection, texto, el });
     fecharObs();
+    renderNotebook();
     flashCaderno();
     window.getSelection().removeAllRanges();
   }
@@ -355,6 +407,9 @@
     a.click();
   }
 
+  renderLessons();
+  renderProgress();
+  syncBtnConcluir();
   renderNotebook();
   carregarBookmark();
   syncPlayer();
